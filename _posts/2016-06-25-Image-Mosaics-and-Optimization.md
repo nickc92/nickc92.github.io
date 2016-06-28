@@ -164,3 +164,83 @@ while True:
 {%endhighlight%}
 
 Here are the results of that:
+
+![reconstruction, tiles any position](/images/Mosaic/van_gogh_rightangle_anypos.jpg)
+
+Clearly, this less-constrained optimization does a lot better job.  By positioning tiles
+anywhere it wants, it is able to much more accurately outline shapes.
+
+Given that we are now doing a better job of reproducing our target, we can try to use bigger
+tiles:
+
+![reconstruction, bigger tiles](/images/Mosaic/van_gogh_rightangle_bigtiles.jpg)
+
+Not so good of a reconstruction, but looks plausible when you look at the screen from across
+the room.
+
+### Transparency
+My wife suggested the interesting idea of transparency: what if the tiles we lay down are 
+a bit transparent?  
+
+The way we can achieve this effect is surprisingly simple:
+{%highlight python%}
+TRANSPARENCY = 0.3
+while True:
+      k = random.randint(0, N - n - 1)
+      l = random.randint(0, N - n - 1)
+      t = random.randint(0, len(tiles) - 1)
+      oldmatch = match(R[k:k+n, l:l+n], T[k:k+n, l:l+n])
+      newpatch = (1 - TRANSPARENCY) * tiles[t] + TRANSPARENCY * R[k:k+n, l:l+n]
+      newmatch = match(newpatch, T[k:k+n, l:l+n])
+      if newmatch < oldmatch:
+        R[k:k+n, l:l+n] = newpatch
+{%endhighlight%}
+
+The result looks like this (using an intermediate tile size):
+
+![reconstruction, transparent tiles](/images/Mosaic/van_gogh_rightangle_transparent.jpg)
+
+It starts to take on a, shall I say, digital-impressionistic quality...interesting.
+
+### Rotatable Images
+You know, I remember back in the 80s when there was barely enough processor power to do anything.
+And you were lucky to have a simple Pascal compiler.  Forget about any libraries or anything.
+Nowadays there is just so much free software and powerful processing power available.  It's 
+trivial to try out things like this:
+
+What if we not only wish to remove the grid-location constraint on our tiles, but the 
+rotation angle of the tiles as well?  This is slightly more involved to try, but only slightly.
+I came at this with two things:
+
+* For each tile, I created a set of 36 rotations of the small tile image.  Each rotated tile
+was considered to me a new tile itself.
+* When you rotate a tile image, the result is still a rectangle, but with empty corners:
+
+ ![tile, unrotated](/images/Mosaic/warthog.jpg) -> ![tile, rotated](/images/Mosaic/warthog_rotated.jpg)
+
+ You have to be careful to avoid those white corners when comparing a rotated tile to the
+ target image, and you must avoid pasting in those white pixels when you want to insert a rotated
+ tile into the resconstruction image.
+
+So keeping those caveats in mind, here is Van Gogh, now reconstructed by rotatable, partly
+transparent tiles that can be placed anywhere:
+ 
+![](/images/Mosaic/van_gogh_anyangle_transparent.jpg)
+
+I find this final result, with all sorts of freedom allowed, to be the outcome I like the most.
+It has a nice hazy quality to it, haphazard yet very intentional at the same time.
+
+## Rendering
+So I liked some of the output of this thing, and I wanted to make a poster.  I realized that
+while it makes sense during the optimization to use small image tiles (large image tiles would
+take too long to compute), if I store the locations and rotations of all the placed tiles, I
+can render a much higher resolution version of the mosaic, for the purposes of printing on a
+larger scale.  So the mosaic code in the repository produces a 'planfile', which records the 
+placement of the tiles, and there is a render script which can render the mosaic at a larger
+scale.
+
+One final thing that is interesting to look at.  Here is an animation of the optimization process:
+
+![](/images/Mosaic/van_gogh_animated.gif)
+
+So that's it.  I'd love to hear your thoughts and suggestions.

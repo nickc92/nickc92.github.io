@@ -19,3 +19,5 @@ github_username:  nickc92
 
 # Build settings
 markdown: kramdown
+
+comments: true

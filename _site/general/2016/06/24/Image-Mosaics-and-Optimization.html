@@ -292,7 +292,111 @@ modification:</p>
 
 <p>Here are the results of that:</p>
 
+<p><img src="/images/Mosaic/van_gogh_rightangle_anypos.jpg" alt="reconstruction, tiles any position" /></p>
+
+<p>Clearly, this less-constrained optimization does a lot better job.  By positioning tiles
+anywhere it wants, it is able to much more accurately outline shapes.</p>
+
+<p>Given that we are now doing a better job of reproducing our target, we can try to use bigger
+tiles:</p>
+
+<p><img src="/images/Mosaic/van_gogh_rightangle_bigtiles.jpg" alt="reconstruction, bigger tiles" /></p>
+
+<p>Not so good of a reconstruction, but looks plausible when you look at the screen from across
+the room.</p>
+
+<h3 id="transparency">Transparency</h3>
+<p>My wife suggested the interesting idea of transparency: what if the tiles we lay down are 
+a bit transparent?</p>
+
+<p>The way we can achieve this effect is surprisingly simple:</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">TRANSPARENCY</span> <span class="o">=</span> <span class="mf">0.3</span>
+<span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+      <span class="n">k</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">N</span> <span class="o">-</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+      <span class="n">l</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">N</span> <span class="o">-</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+      <span class="n">t</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">tiles</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+      <span class="n">oldmatch</span> <span class="o">=</span> <span class="n">match</span><span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="n">k</span><span class="p">:</span><span class="n">k</span><span class="o">+</span><span class="n">n</span><span class="p">,</span> <span class="n">l</span><span class="p">:</span><span class="n">l</span><span class="o">+</span><span class="n">n</span><span class="p">],</span> <span class="n">T</span><span class="p">[</span><span class="n">k</span><span class="p">:</span><span class="n">k</span><span class="o">+</span><span class="n">n</span><span class="p">,</span> <span class="n">l</span><span class="p">:</span><span class="n">l</span><span class="o">+</span><span class="n">n</span><span class="p">])</span>
+      <span class="n">newpatch</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">TRANSPARENCY</span><span class="p">)</span> <span class="o">*</span> <span class="n">tiles</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">+</span> <span class="n">TRANSPARENCY</span> <span class="o">*</span> <span class="n">R</span><span class="p">[</span><span class="n">k</span><span class="p">:</span><span class="n">k</span><span class="o">+</span><span class="n">n</span><span class="p">,</span> <span class="n">l</span><span class="p">:</span><span class="n">l</span><span class="o">+</span><span class="n">n</span><span class="p">]</span>
+      <span class="n">newmatch</span> <span class="o">=</span> <span class="n">match</span><span class="p">(</span><span class="n">newpatch</span><span class="p">,</span> <span class="n">T</span><span class="p">[</span><span class="n">k</span><span class="p">:</span><span class="n">k</span><span class="o">+</span><span class="n">n</span><span class="p">,</span> <span class="n">l</span><span class="p">:</span><span class="n">l</span><span class="o">+</span><span class="n">n</span><span class="p">])</span>
+      <span class="k">if</span> <span class="n">newmatch</span> <span class="o">&lt;</span> <span class="n">oldmatch</span><span class="p">:</span>
+        <span class="n">R</span><span class="p">[</span><span class="n">k</span><span class="p">:</span><span class="n">k</span><span class="o">+</span><span class="n">n</span><span class="p">,</span> <span class="n">l</span><span class="p">:</span><span class="n">l</span><span class="o">+</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">newpatch</span></code></pre></figure>
+
+<p>The result looks like this (using an intermediate tile size):</p>
+
+<p><img src="/images/Mosaic/van_gogh_rightangle_transparent.jpg" alt="reconstruction, transparent tiles" /></p>
+
+<p>It starts to take on a, shall I say, digital-impressionistic quality…interesting.</p>
+
+<h3 id="rotatable-images">Rotatable Images</h3>
+<p>You know, I remember back in the 80s when there was barely enough processor power to do anything.
+And you were lucky to have a simple Pascal compiler.  Forget about any libraries or anything.
+Nowadays there is just so much free software and powerful processing power available.  It’s 
+trivial to try out things like this:</p>
+
+<p>What if we not only wish to remove the grid-location constraint on our tiles, but the 
+rotation angle of the tiles as well?  This is slightly more involved to try, but only slightly.
+I came at this with two things:</p>
+
+<ul>
+  <li>For each tile, I created a set of 36 rotations of the small tile image.  Each rotated tile
+was considered to me a new tile itself.</li>
+  <li>When you rotate a tile image, the result is still a rectangle, but with empty corners:</li>
+</ul>
+
+<p><img src="/images/Mosaic/warthog.jpg" alt="tile, unrotated" /> -&gt; <img src="/images/Mosaic/warthog_rotated.jpg" alt="tile, rotated" /></p>
+
+<p>You have to be careful to avoid those white corners when comparing a rotated tile to the
+ target image, and you must avoid pasting in those white pixels when you want to insert a rotated
+ tile into the resconstruction image.</p>
+
+<p>So keeping those caveats in mind, here is Van Gogh, now reconstructed by rotatable, partly
+transparent tiles that can be placed anywhere:</p>
+
+<p><img src="/images/Mosaic/van_gogh_anyangle_transparent.jpg" alt="" /></p>
+
+<p>I find this final result, with all sorts of freedom allowed, to be the outcome I like the most.
+It has a nice hazy quality to it, haphazard yet very intentional at the same time.</p>
+
+<h2 id="rendering">Rendering</h2>
+<p>So I liked some of the output of this thing, and I wanted to make a poster.  I realized that
+while it makes sense during the optimization to use small image tiles (large image tiles would
+take too long to compute), if I store the locations and rotations of all the placed tiles, I
+can render a much higher resolution version of the mosaic, for the purposes of printing on a
+larger scale.  So the mosaic code in the repository produces a ‘planfile’, which records the 
+placement of the tiles, and there is a render script which can render the mosaic at a larger
+scale.</p>
+
+<p>One final thing that is interesting to look at.  Here is an animation of the optimization process:</p>
+
+<p><img src="/images/Mosaic/van_gogh_animated.gif" alt="" /></p>
+
+<p>So that’s it.  I’d love to hear your thoughts and suggestions.</p>
+
   </div>
+
+<div id="disqus_thread"></div>
+<script>
+    /**
+     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+     */
+    /*
+    var disqus_config = function () {
+        this.page.url = "http://nickc92.github.io";  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = "hello"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    */
+    (function() {  // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        
+        s.src = '//algokitchen.disqus.com/embed.js';
+        
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
 
 
 </article>
