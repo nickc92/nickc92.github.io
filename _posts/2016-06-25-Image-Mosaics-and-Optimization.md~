@@ -4,9 +4,6 @@ title: "Image Mosaics and Optimization"
 date: 2016-06-25 00:00:00
 categories: general
 ---
-
-Code for this post can be found [here](https://github.com/nickc92/imagemosaic).
-
 In this post I want to discuss a general, very powerful method for attacking many
 problems in a wide variety of quantitative fields, and a specific application of it.
 

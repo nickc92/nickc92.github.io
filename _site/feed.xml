@@ -5,13 +5,15 @@
     <description>&lt;h2&gt;Algo Kitchen&lt;/h2&gt;</description>
     <link>http://nickc92.github.io/</link>
     <atom:link href="http://nickc92.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Tue, 28 Jun 2016 15:25:22 -0400</pubDate>
-    <lastBuildDate>Tue, 28 Jun 2016 15:25:22 -0400</lastBuildDate>
+    <pubDate>Tue, 28 Jun 2016 16:07:41 -0400</pubDate>
+    <lastBuildDate>Tue, 28 Jun 2016 16:07:41 -0400</lastBuildDate>
     <generator>Jekyll v3.1.6</generator>
     
       <item>
         <title>Image Mosaics and Optimization</title>
-        <description>&lt;p&gt;In this post I want to discuss a general, very powerful method for attacking many
+        <description>&lt;p&gt;Code for this post can be found &lt;a href=&quot;https://github.com/nickc92/imagemosaic&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;In this post I want to discuss a general, very powerful method for attacking many
 problems in a wide variety of quantitative fields, and a specific application of it.&lt;/p&gt;
 
 &lt;p&gt;The specific application I have in mind is the creation of image mosaics.  Everyone
