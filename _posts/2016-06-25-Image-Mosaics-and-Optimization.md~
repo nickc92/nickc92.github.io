@@ -1,0 +1,96 @@
+---
+layout: post
+title: "Image Mosaics and Optimization"
+date: 2016-06-25 00:00:00
+categories: general
+---
+In this post I want to discuss a general, very powerful method for attacking many
+problems in a wide variety of quantitative fields, and a specific application of it.
+
+The specific application I have in mind is the creation of image mosaics.  Everyone
+has seen the kind of thing I'm talking about:
+
+![monalisa mosaic](/images/monalisa_mosaic.jpg)
+
+Here, the Mona Lisa painting is represented by a bunch of subimages.  In this post
+I share my algorithm for generating such images, and then I show some fun variations
+on the idea that are very easy once you've built the thing to begin with.
+
+The general approach I used falls into the general category of:
+
+## Optimization
+
+A very, very general approach to solving many quantitative problems is to cast the
+problem in the form of a numerical optimization.  Let's say, very generally, that 
+the things we have control over are a series of variables $$c_1, c_2,...$$.  These
+controls produce some outcome.  Now the general scheme of for solving our problem simply
+this:
+
+* Express our problem quantitatively.  Since the outcome depends on our control settings,
+then very generally we can write the quantitative expression of our problem as:
+$$f(c_1, c_2, ...) = 0$$
+* Create a _penalty function_ $$P(c_1, c_2, ...)$$ that has a minimum when we've solved
+the problem.  One easy way to do this is to simply take the square of $$f$$:
+$$P(c_i) = [f(c_i)]^2$$
+* Minimize $$P(c_i)$$ with respect to our controls $$c_i$$
+
+This may sound like semantics; are we really any closer to solving the problem, or 
+have we simply re-expressed it?  But the last crucial step, the minimization of a
+multivariate function, is a heavily-studied problem in applied mathematics, and many
+clever methods have been developed to solve it.  
+
+So this is a really seductive way to view many problems, and it sort of immediately
+provides an abstract route to solving a problem.  Further, even if you cannot fully
+solve the problem, casting it as a minimization problem, and trying to carry out
+that minimization, generally leaves one with a "best guess" solution, one that
+is probably better than nothing.
+
+Many problems in the physical and abstract sciences are fruitfully approached this
+way:
+
+* In physics, the behavior of the physical world is often cast as a "least-action
+principle," which is a minimization problem.
+* In machine learning, a very hot topic these days, most of the "learning" done by
+the neural networks is cast as a minimization problem.  For example, an 
+image-classifying neural network is typically trained by minimizing the difference 
+between its guesses and the correct answers.
+* Corporations are always trying to minimize cost, so if they can model their costs
+quantitatively, they can and do try to minimize them.
+* ...
+
+## Image Mosaics as an Optimization Problem
+
+The process of constructing an image mosaic is essentially one of optimization.  For
+simplicity, let's work in greyscale for the time being.  Let's
+say you have:
+
+* $$T_{ij}$$, a _target image_ that you are trying to reproduce; $$i$$ and
+$$j$$ label the pixels in the image; let's say that it's $$N \times N$$.  
+* $$t^p_{ij}$$, a bunch of small tile images (p labels which tile), which we wish
+to arrange to as to most closely match the target image. Let's say these tiles
+are $$n \times n$$ pixels.
+* $$R__{ij}$$, the reconstruction image, made up of placing tiles on it.
+
+The optimization we are trying to do is to make $$R_{ij}$$ most close to $$T_{ij}$$.
+If these are both arrays of greyscale values, then we want to minimize something like:
+
+$$\sum_{ij} [T_{ij} - R_{ij}]^2$$
+
+For a typical image mosaic, where the tiles are arranged in a grid, then we can
+proceed as follows (The following is in Python's numpy, but hopefully close enough to pseudocode):
+
+```
+R = zeros((N, N))
+Nt = N / n
+for l in range(Nt):
+  for k in range(Nt):
+    best_match = 1.0E6
+    best_tile = None
+    for tile in tiles:
+      m = match(tile, T[l * n : (l+1) * n, k * n : (k+1) * n])
+      if m < best_match:
+        best_match = m
+        best_tile = tile
+    
+    R[l * n : (l+1) * n, k * n : (k+1) * n] = best_tile
+```
