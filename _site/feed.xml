@@ -5,9 +5,121 @@
     <description>&lt;h2&gt;Algo Kitchen&lt;/h2&gt;</description>
     <link>http://nickc92.github.io/</link>
     <atom:link href="http://nickc92.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Tue, 28 Jun 2016 16:07:41 -0400</pubDate>
-    <lastBuildDate>Tue, 28 Jun 2016 16:07:41 -0400</lastBuildDate>
+    <pubDate>Tue, 28 Jun 2016 23:04:12 -0400</pubDate>
+    <lastBuildDate>Tue, 28 Jun 2016 23:04:12 -0400</lastBuildDate>
     <generator>Jekyll v3.1.6</generator>
+    
+      <item>
+        <title>3D Mazes</title>
+        <description>&lt;h1 id=&quot;d-mazes&quot;&gt;3D Mazes&lt;/h1&gt;
+
+&lt;p&gt;The code for this project can be found &lt;a href=&quot;http://github.com/nickc92/maze.git&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Mazes are a fine and dandy amusement, but they get old pretty fast.  I think that’s 
+because there’s a straightforward way to solve them, which simply consists of trying 
+all of the possibilities.  I don’t think there’s any particularly better way to do them,
+ is there?  Anyway,  I thought it might be more interesting to make a 3D maze.    Yes, 
+the general way you’d solve it is still basically the same, but I was curious if it 
+would be any more fun.&lt;/p&gt;
+
+&lt;p&gt;I thought about how I’d actually construct a 3D maze.  What I came up with is to have 
+the maze be an &lt;script type=&quot;math/tex&quot;&gt;N \times N \times N&lt;/script&gt; grid, with a path hollowed out.  There will 
+only be one entry/exit hole, and you drop a ball bearing in the hole, get it lost in the
+ maze, and then the challenge is to get it back out.  My plan was to make the maze 
+out of 1/4” square dowels (the grid size being 1/4”).&lt;/p&gt;
+
+&lt;p&gt;I wanted to have the computer design the maze for me.  Otherwise, what would I do, 
+design one with a CAD program by hand?  So I wanted to write a program to design 
+the maze for me.  Like so many things, I approached it as an optimization problem 
+(sort of).  At the most abstract level, I wanted the program to design “the best” 
+maze possible.  But more specifically, I wanted the maze:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;to be readily constructable in reality,&lt;/li&gt;
+  &lt;li&gt;to be as “complicated” as possible.&lt;/li&gt;
+  &lt;li&gt;to be of a constrained size.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;So in general, what I did was a constrained random tree search through the set of 
+all possible 3D mazes that match my criteria.  I start with an initial state of a 
+maze that consists of just the entry hole.  Then I extend the hole, so long as the 
+following situations don’t occur (red represents part of the maze path, or hole):&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/Maze3D/disallowed.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;(a) T-junctions: I didn’t want to have the situation where you roll the ball to the 
+junction, and then the ball just rolls either way along the T.  I think I could 
+probably remove this rule and still have good mazes.&lt;/li&gt;
+  &lt;li&gt;(b) Square pockets: I don’t want pockets inside the maze.  It’s just not very maze-like.&lt;/li&gt;
+  &lt;li&gt;(c) In-plane kitty-corner holes: I don’t want any kitty-corner holes; this is more of a structural concern.  If there are too many of these, I’d be worried about problems building the maze.&lt;/li&gt;
+  &lt;li&gt;(d) Out-of-plane kitty-corner holes: same reasoning as (c).&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;I think this means that the only allowed type of junction in the maze is a 
+3D junction like this:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/Maze3D/allowed.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;So basically the maze-search program works like this:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt; &lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Maze&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;  
+  &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;genRandomMaze&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;  
+   &lt;span class=&quot;n&quot;&gt;childMaze&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;getRandomValidChildMaze&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;  
+   &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;childMaze&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;  
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;  
+   &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;childMaze&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;genRandomMaze&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;  
+   
+  &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;getRandomValidChildMaze&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;  
+   &lt;span class=&quot;c&quot;&gt;# add a new hole to the maze that doesn&#39;t violate our criteria  &lt;/span&gt;
+   
+ &lt;span class=&quot;n&quot;&gt;maze&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;initial_maze&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# start the maze with 1 hole at the entry-point  &lt;/span&gt;
+ &lt;span class=&quot;n&quot;&gt;bestMaze&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;maze&lt;/span&gt;  
+ &lt;span class=&quot;k&quot;&gt;while&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;  
+  &lt;span class=&quot;n&quot;&gt;maze&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;genRandomMaze&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;  
+  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;maze&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;getNumJunctions&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bestMaze&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;getNumJunctions&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;  
+   &lt;span class=&quot;n&quot;&gt;bestMaze&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;maze&lt;/span&gt;  &lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;What is this doing? We start with an initial maze, then it essentially adds holes randomly to the maze, until it cannot accommodate more holes without violating the rules above. Then it looks to see how many junctions the maze has (I’m using the number of junctions as a proxy for how “hard” the maze is). If it’s a record number of junctions, then it records the details of the maze. So for example, when I run this for a 7x7x7 maze for a little while, I quickly find a maze with 21 junctions; then 23; 24; 26…I think the highest number of junctions I managed to find with a 7x7x7 maze is 32.&lt;/p&gt;
+
+&lt;p&gt;The program also shows what the maze looks like, using VPython:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/Maze3D/fullmaze.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;And it also prints out what the layers look like, and tells me (for construction purposes) if I want to build this, how many segments of length 1, 2, 3, etc. I will need to cut:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;o  o  ooo  oooo oooo  o oo   oo  oooooo oo  
+o ooooo o  o ooooo o  o  o o  o  oo   oooo  
+ooooo   o  ooooooooo  oo oooo o  ooooooooo  
+ooooo ooo  ooo   ooo  oo  ooo o  o  oooooo  
+ooooooooo  ooo o  oo  oooooo  o  oo oooo o  
+ooo ooooo  oo  oo oo  ooooooooo  oo oooooo  
+o oooo  o  o  oo  oo  oo oo ooo  oo  o  oo  
+counts: [0, 58, 22, 13, 6, 6, 6, 3, 0, 8]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;The above is only showing 4 of the 7 layers, but you get the idea. The maze I actually built, looks like this:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/Maze3D/mazephoto.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Again, you stick a ball bearing into that bottom hole, roll it around in the maze for 
+a while until it gets lost, and then you gotta get it out.
+How is this maze to play?  Well, in all honesty…a little lame.  It feels kind of 
+trial-and-errorish getting the ball out.  And it’s not that hard.  Hmm.  Oh well.&lt;br /&gt;
+I still found writing the program to be interesting.  Who knows, maybe someone can 
+turn this into a more interesting toy?&lt;/p&gt;
+
+&lt;p&gt;One thing I’ve seen, which I think is very cool, much nicer than my mazes, are 3D-printed mazes.  Shapeways seems to have many of these, but all of them look cool. They have the great advantage over mine of allowing one to see the ball the whole time.  I wonder how these guys generated their mazes?&lt;/p&gt;
+</description>
+        <pubDate>Mon, 27 Jun 2016 20:00:00 -0400</pubDate>
+        <link>http://nickc92.github.io/general/2016/06/27/3D-Mazes.html</link>
+        <guid isPermaLink="true">http://nickc92.github.io/general/2016/06/27/3D-Mazes.html</guid>
+        
+        
+        <category>general</category>
+        
+      </item>
     
       <item>
         <title>Image Mosaics and Optimization</title>

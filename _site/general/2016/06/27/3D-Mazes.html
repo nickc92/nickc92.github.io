@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<script type="text/javascript"
+    src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta content="Algo Kitchen" property="og:site_name">
+
+  <meta content="3D Mazes" property="og:title">
+
+
+  <meta content="article" property="og:type">
+
+
+  <meta content="<h2>Algo Kitchen</h2>" property="og:description">
+
+
+  <meta content="http://nickc92.github.io/general/2016/06/27/3D-Mazes.html" property="og:url">
+
+
+  <meta content="2016-06-27T20:00:00-04:00" property="article:published_time">
+  <meta content="http://nickc92.github.io/about/" property="article:author">
+
+
+  <meta property="og:image" content="">
+
+
+  
+  <meta content="general" property="article:section">
+  
+
+
+  
+
+  <title>3D Mazes</title>
+  <meta name="description" content="3D Mazes">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="/css/main.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+  <link href='https://fonts.googleapis.com/css?family=PT+Sans' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Fira+Mono' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Source+Code+Pro:400,200,300,500,600,700,900' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Gentium+Basic:400,700' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Alegreya:400,400italic,700' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Lora:400,400italic,700' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Fira+Sans:400,300,500,700' rel='stylesheet' type='text/css'>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-hQpvDQiCJaD2H465dQfA717v7lu5qHWtDbWNPvaTJ0ID5xnPUlVXnKzq7b8YUkbN" crossorigin="anonymous">
+  <link rel="canonical" href="http://nickc92.github.io/general/2016/06/27/3D-Mazes.html">
+  <link rel="alternate" type="application/rss+xml" title="Algo Kitchen" href="http://nickc92.github.io/feed.xml">
+</head>
+
+
+  <body>
+<!-- <a href="https://github.com/hemangsk/DevJournal"><img style="position: absolute; top: 0; right: 0; border: 0; z-index: 9999;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a> -->
+
+<section>
+<nav class="navbar navbar-default navbar-fixed-top">
+
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">Algo Kitchen</a>
+    </div>
+
+
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        
+        
+        <li><a href="/about/">About</a></li>
+
+        
+
+        
+        
+
+        
+        
+
+        
+        
+
+        
+
+
+      </ul>
+
+    <!--  <ul class="nav navbar-nav navbar-right">
+        <li><a href="#">Know More!</a></li>
+
+      </ul>-->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+</section>
+
+<section>
+<script type="text/javascript"
+    src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="jumbotron">
+    <div class="container">
+      <h1 class="post-title-main" itemprop="name headline">3D Mazes</h1>
+      <p class="post-meta"><time datetime="2016-06-27T20:00:00-04:00" itemprop="datePublished">Jun 27, 2016</time></p>
+      
+    </div>
+
+</div>
+
+
+  <div class="post-content container" itemprop="articleBody">
+    <h1 id="d-mazes">3D Mazes</h1>
+
+<p>The code for this project can be found <a href="http://github.com/nickc92/maze.git">here</a>.</p>
+
+<p>Mazes are a fine and dandy amusement, but they get old pretty fast.  I think that’s 
+because there’s a straightforward way to solve them, which simply consists of trying 
+all of the possibilities.  I don’t think there’s any particularly better way to do them,
+ is there?  Anyway,  I thought it might be more interesting to make a 3D maze.    Yes, 
+the general way you’d solve it is still basically the same, but I was curious if it 
+would be any more fun.</p>
+
+<p>I thought about how I’d actually construct a 3D maze.  What I came up with is to have 
+the maze be an <script type="math/tex">N \times N \times N</script> grid, with a path hollowed out.  There will 
+only be one entry/exit hole, and you drop a ball bearing in the hole, get it lost in the
+ maze, and then the challenge is to get it back out.  My plan was to make the maze 
+out of 1/4” square dowels (the grid size being 1/4”).</p>
+
+<p>I wanted to have the computer design the maze for me.  Otherwise, what would I do, 
+design one with a CAD program by hand?  So I wanted to write a program to design 
+the maze for me.  Like so many things, I approached it as an optimization problem 
+(sort of).  At the most abstract level, I wanted the program to design “the best” 
+maze possible.  But more specifically, I wanted the maze:</p>
+
+<ul>
+  <li>to be readily constructable in reality,</li>
+  <li>to be as “complicated” as possible.</li>
+  <li>to be of a constrained size.</li>
+</ul>
+
+<p>So in general, what I did was a constrained random tree search through the set of 
+all possible 3D mazes that match my criteria.  I start with an initial state of a 
+maze that consists of just the entry hole.  Then I extend the hole, so long as the 
+following situations don’t occur (red represents part of the maze path, or hole):</p>
+
+<p><img src="/images/Maze3D/disallowed.png" alt="" /></p>
+
+<ul>
+  <li>(a) T-junctions: I didn’t want to have the situation where you roll the ball to the 
+junction, and then the ball just rolls either way along the T.  I think I could 
+probably remove this rule and still have good mazes.</li>
+  <li>(b) Square pockets: I don’t want pockets inside the maze.  It’s just not very maze-like.</li>
+  <li>(c) In-plane kitty-corner holes: I don’t want any kitty-corner holes; this is more of a structural concern.  If there are too many of these, I’d be worried about problems building the maze.</li>
+  <li>(d) Out-of-plane kitty-corner holes: same reasoning as (c).</li>
+</ul>
+
+<p>I think this means that the only allowed type of junction in the maze is a 
+3D junction like this:</p>
+
+<p><img src="/images/Maze3D/allowed.png" alt="" /></p>
+
+<p>So basically the maze-search program works like this:</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"> <span class="k">class</span> <span class="nc">Maze</span><span class="p">:</span>  
+  <span class="k">def</span> <span class="nf">genRandomMaze</span><span class="p">():</span>  
+   <span class="n">childMaze</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getRandomValidChildMaze</span><span class="p">()</span>  
+   <span class="k">if</span> <span class="n">childMaze</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>  
+    <span class="k">return</span> <span class="bp">self</span>  
+   <span class="k">return</span> <span class="n">childMaze</span><span class="o">.</span><span class="n">genRandomMaze</span><span class="p">()</span>  
+   
+  <span class="k">def</span> <span class="nf">getRandomValidChildMaze</span><span class="p">():</span>  
+   <span class="c"># add a new hole to the maze that doesn't violate our criteria  </span>
+   
+ <span class="n">maze</span> <span class="o">=</span> <span class="n">initial_maze</span><span class="p">()</span>  <span class="c"># start the maze with 1 hole at the entry-point  </span>
+ <span class="n">bestMaze</span> <span class="o">=</span> <span class="n">maze</span>  
+ <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>  
+  <span class="n">maze</span><span class="o">.</span><span class="n">genRandomMaze</span><span class="p">()</span>  
+  <span class="k">if</span> <span class="n">maze</span><span class="o">.</span><span class="n">getNumJunctions</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">bestMaze</span><span class="o">.</span><span class="n">getNumJunctions</span><span class="p">():</span>  
+   <span class="n">bestMaze</span> <span class="o">=</span> <span class="n">maze</span>  </code></pre></figure>
+
+<p>What is this doing? We start with an initial maze, then it essentially adds holes randomly to the maze, until it cannot accommodate more holes without violating the rules above. Then it looks to see how many junctions the maze has (I’m using the number of junctions as a proxy for how “hard” the maze is). If it’s a record number of junctions, then it records the details of the maze. So for example, when I run this for a 7x7x7 maze for a little while, I quickly find a maze with 21 junctions; then 23; 24; 26…I think the highest number of junctions I managed to find with a 7x7x7 maze is 32.</p>
+
+<p>The program also shows what the maze looks like, using VPython:</p>
+
+<p><img src="/images/Maze3D/fullmaze.png" alt="" /></p>
+
+<p>And it also prints out what the layers look like, and tells me (for construction purposes) if I want to build this, how many segments of length 1, 2, 3, etc. I will need to cut:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>o  o  ooo  oooo oooo  o oo   oo  oooooo oo  
+o ooooo o  o ooooo o  o  o o  o  oo   oooo  
+ooooo   o  ooooooooo  oo oooo o  ooooooooo  
+ooooo ooo  ooo   ooo  oo  ooo o  o  oooooo  
+ooooooooo  ooo o  oo  oooooo  o  oo oooo o  
+ooo ooooo  oo  oo oo  ooooooooo  oo oooooo  
+o oooo  o  o  oo  oo  oo oo ooo  oo  o  oo  
+counts: [0, 58, 22, 13, 6, 6, 6, 3, 0, 8]
+</code></pre>
+</div>
+
+<p>The above is only showing 4 of the 7 layers, but you get the idea. The maze I actually built, looks like this:</p>
+
+<p><img src="/images/Maze3D/mazephoto.jpg" alt="" /></p>
+
+<p>Again, you stick a ball bearing into that bottom hole, roll it around in the maze for 
+a while until it gets lost, and then you gotta get it out.
+How is this maze to play?  Well, in all honesty…a little lame.  It feels kind of 
+trial-and-errorish getting the ball out.  And it’s not that hard.  Hmm.  Oh well.<br />
+I still found writing the program to be interesting.  Who knows, maybe someone can 
+turn this into a more interesting toy?</p>
+
+<p>One thing I’ve seen, which I think is very cool, much nicer than my mazes, are 3D-printed mazes.  Shapeways seems to have many of these, but all of them look cool. They have the great advantage over mine of allowing one to see the ball the whole time.  I wonder how these guys generated their mazes?</p>
+
+  </div>
+
+<div id="disqus_thread"></div>
+<script>
+    /**
+     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+     */
+    /*
+    var disqus_config = function () {
+        this.page.url = "http://nickc92.github.io";  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = "hello"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    */
+    (function() {  // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        
+        s.src = '//algokitchen.disqus.com/embed.js';
+        
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
+
+</article>
+
+</section>
+<nav class="navbar navbar-default navbar-fixed-bottom">
+  <div class="container footer-content">
+    Powered By Jekyll
+  </div>
+</nav>
+
+  </body>
+
+</html>
